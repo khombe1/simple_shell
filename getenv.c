@@ -1,34 +1,31 @@
 #include "shell.h"
 
 /**
- * get_environ - return string array copy
- * @info: Struct containing potential arguments to maintain
- *          constant function prototype
- * Return: Always 0
+ * get_environ - returns a copy of the environ array
+ * @info: Structure with potential argument (not used here)
+ * Return: 0
  */
+
 char **get_environ(info_t *info)
 {
-	if (!info->environ || info->env_changed)
-	{
-		info->environ = list_to_strings(info->env);
-		info->env_changed = 0;
-	}
+	if (!info->environ || (info->environ = list_to_strings(info->env)))
+	info->env_changed = 0;
 
-	return (info->environ);
+	return info->environ;
 }
 
 /**
- * _unsetenv - Removes environment var
- * @info: Structure with potential arguments to maintain
- *        constant function prototype.
- *  Return: 1 on delete, 0 otherwise
- * @var: string env var property
+ * _unsetenv - Remove an environment variable
+ * @info: Structure containing potential arguments.
+ * @var: The environment variable to remove.
+ * Return: 1 on success, 0 otherwise
  */
+
 int _unsetenv(info_t *info, char *var)
 {
 	list_t *node = info->env;
-	size_t a = 0;
-	char q;
+	size_t j = 0;
+	char *q;
 
 	if (!node || !var)
 		return (0);
@@ -38,31 +35,30 @@ int _unsetenv(info_t *info, char *var)
 		q = starts_with(node->str, var);
 		if (q && *q == '=')
 		{
-			info->env_changed = delete_node_at_index(&(info->env), a);
-			a = 0;
+			info->env_changed = delete_node_at_index(&(info->env), j);
+			j = 0;
 			node = info->env;
 			continue;
 		}
 		node = node->next;
-		a++;
+		j++;
 	}
 	return (info->env_changed);
 }
 
 /**
- * _setenv - Initialize new env variable/
- * modify existing one.
- * @info: Structure containing potential arguments to maintain
- *        constant function prototype.
- * @var: string env var property
- * @value: string env var value
- *  Return: Always 0
+ * _setenv - Set or modify an environment variable
+ * @info: Struct containing potential arguments (unused).
+ * @var: The name of the environment variable.
+ * @value: The value to assign to the environment variable.
+ * Return: Always 0
  */
+
 int _setenv(info_t *info, char *var, char *value)
 {
 	char *buf = NULL;
 	list_t *node;
-	char *q;
+	char *i;
 
 	if (!var || !value)
 		return (0);
@@ -76,8 +72,8 @@ int _setenv(info_t *info, char *var, char *value)
 	node = info->env;
 	while (node)
 	{
-		q = starts_with(node->str, var);
-		if (q && *q == '=')
+		i = starts_with(node->str, var);
+		if (i && *i == '=')
 		{
 			free(node->str);
 			node->str = buf;
